@@ -1,0 +1,14 @@
+{application, helloclusters,
+ [
+  {description, "hello clusters"},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib,
+                  ranch,
+                  cowboy
+                 ]},
+  {mod, {helloclusters_app, []}},
+  {env, []}
+ ]}.

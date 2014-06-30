@@ -1,0 +1,57 @@
+#!/usr/bin/env escript
+%% -*- erlang -*-
+
+main([Node]) ->
+
+    ensure_config(),
+
+    PipeDir = "/tmp/" ++ Node ++ "/",
+    filelib:ensure_dir("var/logs/"),
+    filelib:ensure_dir(PipeDir),
+
+    Cmd = "run_erl -daemon " ++ PipeDir ++ " var/logs " ++
+        "\"erl -name " ++ Node ++ " -smp "  ++
+        "-pa ./apps/*/ebin -pa ./deps/*/ebin " ++
+        "-s helloclusters_app " ++
+        "-config var/sys\"",
+
+    io:format("Cmd is ~p~n", [Cmd]),
+
+    case os:cmd(Cmd) of
+        []   ->
+            ok,
+            make_shell(Node);
+        Else ->
+            io:format("helloclusters failed to boot:~n~s~n", [Else]),
+            ok
+    end;
+main(_) ->
+    io:format("Usage:~n./start_helloclusters nodename~n"),
+    halt(1).
+
+make_shell(NodeName) ->
+    Shell = io_lib:format("#!/bin/bash~nto_erl /tmp/~s/~n", [NodeName]),
+    file:write_file("shell_" ++ NodeName, Shell),
+    os:cmd("chmod +x shell_" ++ NodeName).
+
+ensure_config() ->
+    case has_config() of
+        false -> copy_default_config();
+        true  -> ok
+    end.
+
+has_config() ->
+    filelib:is_file(config_file()).
+
+config_file() ->
+    [root(), "/var/", "sys.config"].
+
+copy_default_config() ->
+    ok = filelib:ensure_dir([root(), "/var/"]),
+    {ok, _Bytes} =
+        file:copy([root(), "/priv/", "sys.config.default"], config_file()),
+    ok.
+
+root() ->
+    {ok, Root} = file:get_cwd(),
+    Root.

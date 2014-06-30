@@ -5,3 +5,6 @@ deps
 *.plt
 erl_crash.dump
 *~
+shell_alice
+shell_bob
+var/sys.config

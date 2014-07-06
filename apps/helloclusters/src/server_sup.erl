@@ -6,7 +6,7 @@
 %%% @end
 %%% Created : 27 Jun 2014 by gordon@vixo.com
 %%%-------------------------------------------------------------------
--module(helloclusters_sup).
+-module(server_sup).
 
 -behaviour(supervisor).
 
@@ -36,22 +36,8 @@ init([]) ->
 
     SupFlags = {RestartStrategy, MaxRestarts, MaxSecondsBetweenRestarts},
 
-    Restart = permanent,
-    Shutdown = 2000,
-
-    HelloClustersSrv = {helloclusters_srv,
-                        {helloclusters_srv, start_link, []},
-                        Restart, Shutdown, worker,
-                        [helloclusters_srv]},
-
-    ServerSup = {server_sup,
-                        {server_sup, start_link, []},
-                        Restart, Shutdown, supervisor,
-                        [server_sup]},
-
-    {ok, {SupFlags, [HelloClustersSrv, ServerSup]}}.
+    {ok, {SupFlags, []}}.
 
 %%%===================================================================
 %%% Internal functions
 %%%===================================================================
-

@@ -1,0 +1,11 @@
+%% -*- erlang -*-
+[{helloclusters,
+  [
+   {is_prod,   false},
+   {prod_port, 8888},
+   {dev_ports, [
+                {"alice", 8888},
+                {"bob",   8889}
+               ]}
+  ]
+ }].
